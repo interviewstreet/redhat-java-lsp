@@ -51,6 +51,7 @@ let clientLogFile: string;
  * Shows a message about the server crashing due to an out of memory issue
  */
 async function showOOMMessage(): Promise<void> {
+	logOOMError();
 	const CONFIGURE = 'Increase Memory ..';
 	const result = await window.showErrorMessage('The Java Language Server encountered an OutOfMemory error. Some language features may not work due to limited memory. ',
 		CONFIGURE);
@@ -65,6 +66,22 @@ async function showOOMMessage(): Promise<void> {
 			await workspace.getConfiguration().update("java.jdt.ls.vmargs", jvmArgs, ConfigurationTarget.Workspace);
 		}
 	}
+}
+
+/**
+ * HackerRank specific function to log an out of memory error
+ */
+function logOOMError() {
+	commands.executeCommand(
+		'hackerrank.logMessage',
+		'RedhatJava::OutOfMemory',
+		{
+			fullMessage: 'The Java Language Server encountered an OutOfMemory error.',
+			maxMem: getMaxMemFromConfiguration(true),
+		}
+	);
+
+	commands.executeCommand(Commands.CLEAN_WORKSPACE, true);
 }
 
 function getMaxMemFromConfiguration(includeUnit?: boolean): string | undefined {
