@@ -1,5 +1,5 @@
 {
-  "name": "java",
+  "name": "redhat-java-hr",
   "displayName": "Language Support for Java(TM) by Red Hat",
   "description": "Java Linting, Intellisense, formatting, refactoring, Maven/Gradle support and more...",
   "author": "Red Hat",
@@ -40,6 +40,7 @@
     "multi-root ready"
   ],
   "activationEvents": [
+    "onStartupFinished",
     "onLanguage:java",
     "workspaceContains:pom.xml",
     "workspaceContains:*/pom.xml",
@@ -1923,7 +1924,8 @@
     "watch-server": "./node_modules/.bin/gulp watch_server",
     "eslint": "eslint --ignore-path .eslintignore --ext .js,.ts,.tsx .",
     "repo:check": "./node_modules/.bin/gulp repo_check",
-    "repo:fix": "./node_modules/.bin/gulp repo_fix"
+    "repo:fix": "./node_modules/.bin/gulp repo_fix",
+    "package": "vsce package"
   },
   "devDependencies": {
     "@types/fs-extra": "^8.0.0",
