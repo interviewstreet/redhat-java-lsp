@@ -80,8 +80,6 @@ function logOOMError() {
 			maxMem: getMaxMemFromConfiguration(true),
 		}
 	);
-
-	commands.executeCommand(Commands.CLEAN_WORKSPACE, true);
 }
 
 function getMaxMemFromConfiguration(includeUnit?: boolean): string | undefined {
