@@ -1923,7 +1923,8 @@
     "watch-server": "./node_modules/.bin/gulp watch_server",
     "eslint": "eslint --ignore-path .eslintignore --ext .js,.ts,.tsx .",
     "repo:check": "./node_modules/.bin/gulp repo_check",
-    "repo:fix": "./node_modules/.bin/gulp repo_fix"
+    "repo:fix": "./node_modules/.bin/gulp repo_fix",
+    "package": "vsce package"
   },
   "devDependencies": {
     "@types/fs-extra": "^8.0.0",
