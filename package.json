@@ -40,6 +40,7 @@
     "multi-root ready"
   ],
   "activationEvents": [
+    "onStartupFinished",
     "onLanguage:java",
     "workspaceContains:pom.xml",
     "workspaceContains:*/pom.xml",
