@@ -79,7 +79,7 @@ jobs:
             - name: Set Up Java
               uses: actions/setup-java@v4
               with:
-                  java-version: "23"
+                  java-version: "17"
                   distribution: "adopt"
             - name: Build JDT-LS
               if: "${{ inputs.JDT_LS_VERSION == '' }}"
