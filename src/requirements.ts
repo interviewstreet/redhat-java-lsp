@@ -36,15 +36,12 @@ interface ErrorData {
 export async function resolveRequirements(context: ExtensionContext): Promise<RequirementsData> {
     let toolingJre: string = await findEmbeddedJRE(context);
     let toolingJreVersion: number = await getMajorVersion(toolingJre);
-	console.log('HR LOG: toolingJre', toolingJre, toolingJreVersion);
     return new Promise(async (resolve, reject) => {
         const javaPreferences = await checkJavaPreferences(context);
         const preferenceName = javaPreferences.preference;
         let javaHome = javaPreferences.javaHome;
         let javaVersion: number = 0;
         const REQUIRED_JDK_VERSION = ('on' === getJavaConfiguration().get('jdt.ls.javac.enabled'))?23:17;
-		console.log('HR LOG: Setting javaHome', javaHome);
-		console.log('HR LOG: REQUIRED_JDK_VERSION', REQUIRED_JDK_VERSION);
         if (javaHome) {
             const source = `${preferenceName} variable defined in ${env.appName} settings`;
             javaHome = expandHomeDir(javaHome);
@@ -76,8 +73,6 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
 
         // search valid JDKs from env.JAVA_HOME, env.PATH, SDKMAN, jEnv, jabba, Common directories
         const javaRuntimes = await listJdks();
-		console.log('HR LOG: javaRuntimes', javaRuntimes);
-		console.log('HR LOG: toolingJre', toolingJre);
         if (!toolingJre) { // universal version
             // as latest version as possible.
             sortJdksByVersion(javaRuntimes);
@@ -98,20 +93,16 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
              * We'll keep it for compatibility.
              */
             if (javaHome) {
-                console.log(`HR LOG: Use the JDK from '${preferenceName}' setting as the initial default project JDK.`);
                 logger.info(`Use the JDK from '${preferenceName}' setting as the initial default project JDK.`);
             } else if (javaRuntimes.length) {
                 sortJdksBySource(javaRuntimes);
                 javaHome = javaRuntimes[0].homedir;
                 javaVersion = javaRuntimes[0].version?.major;
-                console.log(`HR LOG: Use the JDK from '${getSources(javaRuntimes[0])}' as the initial default project JDK.`);
                 logger.info(`Use the JDK from '${getSources(javaRuntimes[0])}' as the initial default project JDK.`);
             } else if (javaHome = await findDefaultRuntimeFromSettings()) {
                 javaVersion = await getMajorVersion(javaHome);
-                console.log("HR LOG: Use the JDK from 'java.configuration.runtimes' as the initial default project JDK.");
                 logger.info("Use the JDK from 'java.configuration.runtimes' as the initial default project JDK.");
             } else {
-				console.log("HR LOG: No JDK found. Prompt download.");
                 openJDKDownload(reject, "Please download and install a JDK to compile your project. You can configure your projects with different JDKs by the setting ['java.configuration.runtimes'](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#java.configuration.runtimes)");
             }
         }
@@ -119,13 +110,6 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
         if (!toolingJre || toolingJreVersion < REQUIRED_JDK_VERSION) {
             openJDKDownload(reject, `Java ${REQUIRED_JDK_VERSION} or more recent is required to run the Java extension. Please download and install a recent JDK. You can still compile your projects with older JDKs by configuring ['java.configuration.runtimes'](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#java.configuration.runtimes)`);
         }
-
-		console.log('HR LOG: Resolved requirements', {
-            toolingJre,
-            toolingJreVersion,
-            javaHome,
-            javaVersion,
-        });
 
         /* eslint-disable @typescript-eslint/naming-convention */
         resolve({
@@ -144,13 +128,11 @@ async function findEmbeddedJRE(context: ExtensionContext): Promise<string | unde
         const candidates = fse.readdirSync(jreHome);
         for (const candidate of candidates) {
             if (fse.existsSync(path.join(jreHome, candidate, "bin", JAVA_FILENAME))) {
-				console.log('HR LOG: Found embedded JRE', path.join(jreHome, candidate));
                 return path.join(jreHome, candidate);
             }
         }
     }
 
-	console.log('HR LOG: No embedded JRE found');
     return;
 }
 
