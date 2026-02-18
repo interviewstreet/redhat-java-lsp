@@ -79,8 +79,9 @@ jobs:
             - name: Set Up Java
               uses: actions/setup-java@v4
               with:
-                  java-version: "17"
-                  distribution: "adopt"
+                  # Tycho is built with Java 21 (class file version 65)
+                  java-version: "21"
+                  distribution: "temurin"
             - name: Build JDT-LS
               if: "${{ inputs.JDT_LS_VERSION == '' }}"
               run: |
@@ -92,7 +93,7 @@ jobs:
             - name: Set Up NodeJS
               uses: actions/setup-node@v4
               with:
-                  node-version: "18"
+                  node-version: "20"
             - name: Install NodeJS dependencies
               run: npm install -g typescript "@vscode/vsce" "ovsx"
             - name: Download JDT-LS Release
