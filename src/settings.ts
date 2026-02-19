@@ -294,31 +294,48 @@ export function setGradleWrapperChecksum(wrapper: string, sha256?: string) {
 		return;
 	}
 	gradleWrapperPromptDialogs.push(sha256);
-	const allow = 'Trust';
-	const disallow = 'Do not trust';
-	window.showErrorMessage(`"Security Warning! The gradle wrapper '${wrapper}'" [sha256 '${sha256}'] [could be malicious](https://github.com/redhat-developer/vscode-java/wiki/Gradle-Support#suspicious.wrapper). Should it be trusted?";`, disallow, allow)
-		.then(async selection => {
-			let allowed;
-			if (selection === allow) {
-				allowed = true;
-			} else if (selection === disallow) {
-				allowed = false;
-			} else {
-				unregisterGradleWrapperPromptDialog(sha256);
-				return false;
-			}
-			const key = "java.imports.gradle.wrapper.checksums";
-			let property: any = workspace.getConfiguration().inspect<string>(key).globalValue;
-			if (!Array.isArray(property)) {
-				property = [];
-			}
-			const entry = property.filter(p => (p.sha256 === sha256));
-			if (entry === null || entry.length === 0) {
-				property.push({ sha256: sha256, allowed: allowed });
-				workspace.getConfiguration().update(key, property, ConfigurationTarget.Global);
-			}
-			unregisterGradleWrapperPromptDialog(sha256);
-		});
+	/*
+	 * HackerRank_Specific:
+	 * Commented out the original Gradle wrapper trust prompt dialog.
+	 * Instead of showing a security warning pop-up and asking the user to trust/distrust,
+	 * we silently auto-trust the wrapper by directly writing allowed: true to the configuration.
+	 */
+	// const allow = 'Trust';
+	// const disallow = 'Do not trust';
+	// window.showErrorMessage(`"Security Warning! The gradle wrapper '${wrapper}'" [sha256 '${sha256}'] [could be malicious](https://github.com/redhat-developer/vscode-java/wiki/Gradle-Support#suspicious.wrapper). Should it be trusted?";`, disallow, allow)
+	// 	.then(async selection => {
+	// 		let allowed;
+	// 		if (selection === allow) {
+	// 			allowed = true;
+	// 		} else if (selection === disallow) {
+	// 			allowed = false;
+	// 		} else {
+	// 			unregisterGradleWrapperPromptDialog(sha256);
+	// 			return false;
+	// 		}
+	// 		const key = "java.imports.gradle.wrapper.checksums";
+	// 		let property: any = workspace.getConfiguration().inspect<string>(key).globalValue;
+	// 		if (!Array.isArray(property)) {
+	// 			property = [];
+	// 		}
+	// 		const entry = property.filter(p => (p.sha256 === sha256));
+	// 		if (entry === null || entry.length === 0) {
+	// 			property.push({ sha256: sha256, allowed: allowed });
+	// 			workspace.getConfiguration().update(key, property, ConfigurationTarget.Global);
+	// 		}
+	// 		unregisterGradleWrapperPromptDialog(sha256);
+	// 	});
+	const key = "java.imports.gradle.wrapper.checksums";
+	let property: any = workspace.getConfiguration().inspect<string>(key).globalValue;
+	if (!Array.isArray(property)) {
+		property = [];
+	}
+	const entry = property.filter(p => (p.sha256 === sha256));
+	if (entry === null || entry.length === 0) {
+		property.push({ sha256: sha256, allowed: true });
+		workspace.getConfiguration().update(key, property, ConfigurationTarget.Global);
+	}
+	unregisterGradleWrapperPromptDialog(sha256);
 }
 
 function unregisterGradleWrapperPromptDialog(sha256: string) {
